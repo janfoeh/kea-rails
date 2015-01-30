@@ -1,0 +1,5 @@
+Description:
+    Generate a Knockout viewmodel
+
+Example:
+    rails generate viewmodel UserEditor

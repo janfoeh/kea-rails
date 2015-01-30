@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title><%= content_for?(:title) ? yield(:title) : "" %></title>
+
+    <%= stylesheet_link_tag    "backend/application" %>
+    <%= csrf_meta_tags %>
+  </head>
+
+  <body id="<%= body_id %>" class="<%= body_class %> <%= yield(:body_class) if yield(:body_class) %>">
+    <%= yield %>
+    
+    <script type="application/javascript">
+      <% unless Rails.env.production? %>
+        window.DEBUG = true;
+      <% else %>
+        window.DEBUG = false;
+      <% end %>
+      
+      window.app        = window.app || {};
+      window.app.config = window.app.config || {};
+      window.app.errors = window.app.errors || [];
+      
+      <% flash.each do |key, message| %>  
+        window.app.errors.push({level: "<%= key %>", message: "<%= message.html_safe %>"});
+      <% end %>
+      
+      <%= content_for(:json_cache) if content_for?(:json_cache) %>
+    </script>
+    
+    <%= javascript_include_tag "application" %>
+  </body>
+</html>

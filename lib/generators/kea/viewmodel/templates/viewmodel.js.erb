@@ -1,0 +1,73 @@
+(function(app, ko) {
+  "use strict";
+
+  var viewmodel_name = '<%= name.camelize %>',
+      ViewmodelClass;
+
+  ViewmodelClass = function <%= name.camelize %>() {
+    kea.viewmodels.Parent.apply(this);
+    kea.viewmodels.Child.apply(this);
+    kea.viewmodels.Validatable.apply(this);
+
+    var that = this;
+
+    this._viewmodelName = function _viewmodelName() { return viewmodel_name; };
+
+    this.exit       = ko.observable(false);
+    this.shouldExit = function shouldExit() {
+      var previous = that.exit();
+      
+      that.reset();
+      that.exit(true);
+      if (previous) { that.exit.valueHasMutated(); }
+    };
+
+    // this.context = ko.observable();
+    // this.validatableName('context');
+
+    this.submitInProgress = ko.observable(false);
+    this.submitComplete   = ko.observable(false);
+    
+    // this.isSubmittable = ko.computed(function() {
+    //   return !that.hasFieldsWithErrors() && !that.hasValidationsInProgress();
+    // }, this, {deferEvaluation: true});
+    
+    this.ajaxInProgress   = ko.observable(false);
+    this.ajaxDisabled     = ko.observable(false);
+    this.submitComplete   = ko.observable(false);
+
+    this.reset = function reset() {
+      that.submitComplete(false);
+      that.ajaxInProgress(false);
+      that.ajaxDisabled(false);
+    };
+
+    this.setup = function setup(context) {
+      this.reset();
+      
+      // context.makeValidatable();
+      // that.context(context);
+    };
+    
+    this.submit = function submit() {
+      that.context().validate();
+
+      // if (that.context().hasErrors() || that.submitInProgress() || !that.isSubmittable()) {
+      //   return;
+      // }
+      
+      that.submitInProgress(true);
+      
+      // return that.context().update()
+      //   .done(function(asset) {
+      //     that.submitComplete(true);
+      //   })
+      //   .always(function() {
+      //     that.submitInProgress(false);
+      //   });
+    };
+  };
+
+  app.viewmodels[viewmodel_name] = ViewmodelClass;
+
+})(window.app, ko);

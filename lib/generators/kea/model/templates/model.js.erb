@@ -1,0 +1,48 @@
+(function(app, ko) {
+  "use strict";
+
+  var model_name = '<%= name.camelize %>',
+      ModelClass;
+
+  ModelClass = function <%= name.camelize %>(json) {
+    // kea.models.Validatable.call(this);
+    
+    var that = this;
+
+    this.id            = null;
+    this.resource_path = null;
+    
+    // this.validatableFields = function validatableFields() {
+    //   return ['name'];
+    // };
+
+    // this.attachValidators = function attachValidators() {
+    //   that.name.extend({
+    //     required: {
+    //       message: "Pflichtfeld"
+    //     }
+    //   });
+    // };
+
+    this.fromJSON = function fromJSON(json) {
+      this.id            = json.id;
+      this.resource_path = json.resource_path;
+    };
+    
+    this.serialize = function serialize() {
+      return {
+      };
+    };
+
+    if (json) {
+      this.fromJSON(json);
+    }
+  };
+
+  app.u.inherit(ModelClass, app.models.Base);
+
+  ModelClass.prototype._modelName = function _modelName() { return model_name; };
+
+  app.models[model_name] = ModelClass;
+
+})(window.app, ko);

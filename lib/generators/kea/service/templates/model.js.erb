@@ -1,0 +1,58 @@
+(function(app, ko) {
+  "use strict";
+
+  var model_name  = "<%= name.camelize %>",
+      resourcePath,
+      collectionPath,
+      getCollection,
+      get,
+      refresh,
+      create,
+      update,
+      destroy;
+  
+  resourcePath = function resourcePath(id) {
+    return collectionPath() + '/' + id;
+  };
+  
+  collectionPath = function collectionPath() {
+    return window.app.paths.tags;
+  };
+
+  getCollection = function getCollection(params) {
+    return app.services.Base.get(model_name, collectionPath(), params);
+  };
+  
+  get = function get(id, params, try_cache) {
+    return app.services.Base.get(model_name, resourcePath(id), params, try_cache);
+  };
+  
+  refresh = function refresh(model_instance, params) {
+    return app.services.Base.refresh(model_name, model_instance, params, resourcePath(model_instance.id));
+  };
+  
+  create = function create(model_instance) {
+    return app.services.Base.create(model_name, model_instance, collectionPath())
+              .fail(app.services.Base.failure422Handler);
+  };
+  
+  update = function update(model_instance, params) {
+    return app.services.Base.update(model_name, model_instance, params, resourcePath(model_instance.id))
+            .fail(app.services.Base.failure422Handler);
+  };
+  
+  destroy = function destroy(model_instance) {
+    return app.services.Base.destroy(model_name, model_instance, resourcePath(model_instance.id))
+            .fail(app.services.Base.failure422Handler);
+  };
+
+  app.services[model_name] = {
+    getCollection: getCollection,
+    get: get,
+    refresh: refresh,
+    create: create,
+    update: update,
+    destroy: destroy
+  };
+
+})(window.app, ko);

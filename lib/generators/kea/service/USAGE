@@ -1,0 +1,5 @@
+Description:
+    Generate a Knockout data model
+
+Example:
+    rails generate model User
