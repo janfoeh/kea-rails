@@ -1,0 +1,11 @@
+{
+  "name": "kea",
+  "dependencies": {
+    "attachejs": "git://github.com/janfoeh/attachejs",
+    "veiljs": "git://github.com/janfoeh/veiljs",
+    "uri.js": "~1.11.2",
+    "humane-js": "~3.2.2",
+    "knockout-sortable": "~0.9.3",
+    "Keypress": "~2.1.0"
+  }
+}

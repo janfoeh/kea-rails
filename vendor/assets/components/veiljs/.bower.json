@@ -1,0 +1,44 @@
+{
+  "name": "veiljs",
+  "homepage": "https://github.com/janfoeh/veiljs",
+  "authors": [
+    "Jan-Christian Foeh <jan@programmanstalt.de>"
+  ],
+  "description": "Veil is a JS library for overlays and modal dialogues",
+  "main": [
+    "veil.js",
+    "veil-jquery.js",
+    "veil-knockout.js",
+    "veil.css"
+  ],
+  "keywords": [
+    "overlay",
+    "modal",
+    "ui"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "Gemfile*",
+    "Gruntfile.js",
+    "package.json",
+    "veiljs.sublime-project",
+    "LICENSE",
+    "README.md",
+    "test",
+    "tests",
+    "doc",
+    "sass"
+  ],
+  "_release": "c652d98cce",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "c652d98ccefd5ef965af1978ce647eebd8b1dccd"
+  },
+  "_source": "git://github.com/janfoeh/veiljs.git",
+  "_target": "*",
+  "_originalSource": "git://github.com/janfoeh/veiljs"
+}
