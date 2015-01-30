@@ -1,4 +1,4 @@
-(function(app, ko, URI) {
+(function(app, kea, ko, URI) {
   "use strict";
 
   var _regex_uppercase        = new RegExp('([A-Z])', 'g'),
@@ -40,13 +40,13 @@
     }
 
     if (jqXHR.status === 0 && jqXHR.statusText === 'timeout') {
-      window.app.notify("Server antwortet nicht <p><small>Der Server hat nicht rechtzeitig geantwortet. Bitte versuchen Sie es erneut!</small></p>", 'error');
+      kea.notify("Server antwortet nicht <p><small>Der Server hat nicht rechtzeitig geantwortet. Bitte versuchen Sie es erneut!</small></p>", 'error');
 
     } else if (jqXHR.status === 500 || jqXHR.status === 400 || jqXHR.status === 404) {
-      window.app.notify("Entschuldigung! Der Server hat Schluckauf. <p><small><pre>" + jqXHR.responseText + "</pre></small></p>", 'error');
+      kea.notify("Entschuldigung! Der Server hat Schluckauf. <p><small><pre>" + jqXHR.responseText + "</pre></small></p>", 'error');
 
     } else if (jqXHR.status === 403) {
-      window.app.notify("Das geht nun wirklich nicht! <p><small>Diese Aktion ist nicht erlaubt</small></p>", 'error');
+      kea.notify("Das geht nun wirklich nicht! <p><small>Diese Aktion ist nicht erlaubt</small></p>", 'error');
       
     }
 
@@ -54,13 +54,13 @@
 
   failure422Handler = function failure422Handler(jqXHR, textStatus) {
     if (jqXHR.status === 422) {
-      window.app.notify(jqXHR.responseText, 'error');
+      kea.notify(jqXHR.responseText, 'error');
     }
   };
   
   failure423Handler = function failure423Handler(jqXHR, textStatus) {
     if (jqXHR.status === 423) {
-      window.app.notify(jqXHR.responseText, 'error');
+      kea.notify(jqXHR.responseText, 'error');
     }
   };
 
@@ -211,7 +211,7 @@
     }).fail(_defaultFailureHandler);
   };
 
-  app.services.Base = {
+  kea.services.Base = {
     getCollection: getCollection,
     get: get,
     refresh: refresh,
@@ -224,4 +224,4 @@
     _defaultFailureHandler: _defaultFailureHandler
   };
 
-})(window.app, ko, URI);
+})(window.app, window.kea, ko, URI);

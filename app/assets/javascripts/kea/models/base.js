@@ -1,4 +1,4 @@
-(function(app, ko) {
+(function(app, kea, ko) {
   "use strict";
 
   var Base,
@@ -48,12 +48,12 @@
       dataType: 'JSON'
 
     }).fail(function(jqXHR, textStatus) {
-      window.app.notify(textStatus, 'error');
+      window.kea.notify(textStatus, 'error');
 
     });
   };
 
-  app.models.Base = Base;
+  kea.models.Base = Base;
 
   Validatable = function Validatable() {
     var that = this;
@@ -210,6 +210,6 @@
     };
   };
 
-  app.models.Validatable = Validatable;
+  kea.models.Validatable = Validatable;
 
-})(window.app, ko);
+})(window.app, window.kea, ko);

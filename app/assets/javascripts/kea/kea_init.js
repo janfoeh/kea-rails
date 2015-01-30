@@ -1,22 +1,13 @@
-window.app            = window.app || {};
-window.app.models     = window.app.models || {};
-window.app.services   = window.app.services || {};
-window.app.viewmodels = window.app.viewmodels || {};
+window.kea            = window.kea || {};
+window.kea.models     = window.kea.models || {};
+window.kea.services   = window.kea.services || {};
+window.kea.viewmodels = window.kea.viewmodels || {};
 
-window.app.sherlock = {
+window.kea.sherlock = {
   providers: []
 };
 
-window.app.initializers = window.app.initializers || [];
-window.app.page         = window.app.page || {};
-window.app.paths        = window.app.paths || {};
-
-window.app.paths.assets = '/assets';
-window.app.paths.tags   = '/rubriken';
-window.app.paths.users   = '/users';
-window.app.paths.stories = '/stories';
-
-window.app.u = {
+window.kea.u = {
   inherit: function inherit(Child, Parent) {
     "use strict";
 
@@ -31,7 +22,3 @@ window.app.u = {
     });
   }
 };
-
-moment.lang('de');
-
-Veil.globalOptions.backdropMarkup = null;

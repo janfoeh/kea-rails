@@ -1,4 +1,4 @@
-(function(app, ko) {
+(function(app, kea, ko) {
   "use strict";
 
   // Sub-viewmodel handling. Use with borrowed constructor pattern
@@ -39,7 +39,7 @@
     };
   };
 
-  app.viewmodels.Parent = Parent;
+  kea.viewmodels.Parent = Parent;
 
   // Parent-viewmodel handling. Use with borrowed constructor pattern
 
@@ -61,7 +61,7 @@
     };
   };
 
-  app.viewmodels.Child = Child;
+  kea.viewmodels.Child = Child;
 
   // Object validation handling. Use with borrowed constructor pattern
 
@@ -145,6 +145,6 @@
     };
   };
 
-  app.viewmodels.Validatable = Validatable;
+  kea.viewmodels.Validatable = Validatable;
 
-})(window.app, ko);
+})(window.kea, window.kea, ko);

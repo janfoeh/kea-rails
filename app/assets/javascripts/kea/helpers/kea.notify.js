@@ -1,4 +1,4 @@
-window.app.notify = (function() {
+window.kea.notify = (function() {
   "use strict";
   
   var addNotificationToDom,
