@@ -147,4 +147,4 @@
 
   kea.viewmodels.Validatable = Validatable;
 
-})(window.kea, window.kea, ko);
+})(window.app, window.kea, ko);
