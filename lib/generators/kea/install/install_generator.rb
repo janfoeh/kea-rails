@@ -104,7 +104,7 @@ $(document).ready(function() {
     copy_file "_komplete.sass", namespaced_path("app/assets/stylesheets", "_komplete.sass")
     copy_file "_sherlock.sass", namespaced_path("app/assets/stylesheets", "_sherlock.sass")
     
-    insert_into_file namespaced_path("app/assets/stylesheets", "application.css.sass"), "*= require kea/kea", :before => "*= require_self"
+    insert_into_file namespaced_path("app/assets/stylesheets", "application.css.sass"), "*= require kea/kea\n", :before => "*= require_self"
     
     append_to_file namespaced_path("app/assets/stylesheets", "application.css.sass") do <<-'CSS'
 +keyframes(overlay)
