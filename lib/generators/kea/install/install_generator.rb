@@ -32,7 +32,7 @@ class Kea::InstallGenerator < Rails::Generators::Base
     insert_into_file namespaced_path("app/assets/javascripts", "application.js"), :after => "jquery_ujs\n" do <<-'JS'
 //= require kea/kea_dependencies
 
-//= require init
+//= require ./init
 
 //= require kea/kea
 //= require_directory ./bindings
@@ -88,7 +88,7 @@ $(document).ready(function() {
   
   if (app.errors.length > 0) {
     app.errors.forEach(function(error) {
-      app.notify(error.message, error.level);
+      kea.notify(error.message, error.level);
     });
   }
   

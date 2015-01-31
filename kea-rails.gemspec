@@ -1,11 +1,11 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require "kea/version"
+require "kea-rails/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "kea"
+  s.name        = "kea-rails"
   s.version     = Kea::VERSION
   s.authors     = ["Jan-Christian Foeh"]
   s.email       = ["jan@programmanstalt.de"]
