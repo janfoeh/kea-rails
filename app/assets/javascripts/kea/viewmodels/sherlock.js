@@ -1,11 +1,11 @@
-(function(app, ko) {
+(function(app, kea, ko) {
   "use strict";
 
   var SherlockVm;
 
   SherlockVm = function SherlockVm() {
-    app.viewmodels.Parent.apply(this);
-    app.viewmodels.Child.apply(this);
+    kea.viewmodels.Parent.apply(this);
+    kea.viewmodels.Child.apply(this);
 
     var that = this;
 
@@ -227,4 +227,4 @@
 
   app.sherlock.SherlockVm = SherlockVm;
 
-})(window.app, ko);
+})(window.app, window.kea, ko);
