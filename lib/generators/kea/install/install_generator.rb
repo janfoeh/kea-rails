@@ -96,6 +96,10 @@ $(document).ready(function() {
     JS
     end
   end
+  
+  def application_css
+    insert_into_file namespaced_path("app/assets/stylesheets", "application.css.sass"), "*= require kea/kea", :before => "*= require_self"
+  end
    
   def layout_setup
     copy_file "application.html.erb", "app/views/layouts/#{namespace ? namespace.underscore : "application"}.html.erb"
