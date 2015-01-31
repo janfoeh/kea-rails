@@ -13,6 +13,8 @@
   <body id="<%= body_id %>" class="<%= body_class %> <%= yield(:body_class) if yield(:body_class) %>">
     <%= yield %>
     
+    <%= content_for :knockout_templates if content_for? :knockout_templates %>
+    
     <script type="application/javascript">
       <% unless Rails.env.production? %>
         window.DEBUG = true;
