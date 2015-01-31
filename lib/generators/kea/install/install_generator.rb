@@ -110,7 +110,14 @@ $(document).ready(function() {
     private
     
   def namespaced_path(path, suffix = nil)
-    File.join [path, namespace.underscore, suffix].compact
+    app_namespace = case namespace
+    when 'none', nil
+      nil
+    else
+      namespace.underscore
+    end
+    
+    File.join [path, app_namespace, suffix].compact
   end
   
 end

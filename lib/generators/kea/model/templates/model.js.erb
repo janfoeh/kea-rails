@@ -1,36 +1,84 @@
-(function(app, ko) {
+(function(app, kea, ko) {
   "use strict";
 
   var model_name = '<%= name.camelize %>',
       ModelClass;
 
   ModelClass = function <%= name.camelize %>(json) {
-    // kea.models.Validatable.call(this);
+<% if options[:validatable] -%>
+    kea.models.Validatable.call(this);
+<% end -%>
     
     var that = this;
 
     this.id            = null;
     this.resource_path = null;
-    
-    // this.validatableFields = function validatableFields() {
-    //   return ['name'];
-    // };
 
-    // this.attachValidators = function attachValidators() {
-    //   that.name.extend({
-    //     required: {
-    //       message: "Pflichtfeld"
-    //     }
-    //   });
-    // };
+<% if @klass -%>
+<% @attribute_initializers.each do |attribute| -%>
+    <%= attribute %>
+<% end -%>
+<% end -%>
+<% if options[:validatable] && @validators.any? -%>
+
+    this.validatableFields = function validatableFields() {
+      return <%= @validators.collect(&:attributes).flatten.map(&:to_s).to_s %>;
+    };
+
+    this.attachValidators = function attachValidators() {
+<% @validators.each do |validator| -%>
+
+      that.<%= validator.attributes.first %>.extend({
+        required: {
+          message: "Pflichtfeld"
+        }
+      });
+<% end -%>
+    };
+<% end -%>
 
     this.fromJSON = function fromJSON(json) {
       this.id            = json.id;
       this.resource_path = json.resource_path;
+      
+<% if @klass -%>
+<% @model_attributes.each do |attribute| -%>
+      this.<%= attribute %>( json.<%= attribute %> );
+<% end -%>
+<% @model_associations.each do |assoc| -%>
+<% if assoc.macro == :has_one -%>
+
+      if (json.<%= assoc.name %>) {
+        this.<%= assoc.name %>( new app.models.<%= assoc.name.to_s.singularize.camelize %>(json.<%= assoc.name %>) );
+      }
+<% elsif assoc.macro == :has_many -%>
+
+      if (json.<%= assoc.name %>) {
+        this.<%= assoc.name %>.removeAll();
+        
+        json.<%= assoc.name %>.forEach(function(<%= assoc.name.to_s.singularize %>) {
+          that.<%= assoc.name %>.push( new app.models.<%= assoc.name.to_s.singularize.camelize %>(<%= assoc.name.to_s.singularize %>) );
+        });
+      }
+<% end -%>
+<% end -%>
+<% end -%>
     };
     
     this.serialize = function serialize() {
       return {
+<% if @klass -%>
+<% @model_attributes.each do |attribute| -%>
+        <%= attribute %>: this.<%= attribute %>(),
+<% end -%>
+<% @model_associations.each do |assoc| -%>
+<% if assoc.macro == :has_one -%>
+        <%= assoc.name %>: this.<%= assoc.name %>().serialize(),
+<% elsif assoc.macro == :has_many -%>
+        <%= assoc.name %>: this.<%= assoc.name %>().map(function(<%= assoc.name.to_s.singularize %>) { <%= assoc.name.to_s.singularize %>.serialize(); }),
+<% end -%>
+<% end -%>
+<% end -%>
       };
     };
 
@@ -45,4 +93,4 @@
 
   app.models[model_name] = ModelClass;
 
-})(window.app, ko);
+})(window.app, window.kea, ko);
