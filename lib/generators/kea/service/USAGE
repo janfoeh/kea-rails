@@ -1,5 +1,7 @@
 Description:
-    Generate a Knockout data model
+    Generate a Knockout service, optionally in a namespace such as 'backend'
 
 Example:
-    rails generate model User
+    rails generate kea:service User
+    
+    rails generate kea:service User backend

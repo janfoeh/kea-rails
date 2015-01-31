@@ -1,5 +1,6 @@
 Description:
-    Generate a Knockout viewmodel
+    Generate a Knockout viewmodel, optionally in a namespace such as 'backend'
 
 Example:
-    rails generate viewmodel UserEditor
+    rails generate kea:viewmodel UserEditor
+    rails generate kea:viewmodel UserEditor backend
