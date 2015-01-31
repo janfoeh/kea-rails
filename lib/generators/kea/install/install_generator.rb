@@ -7,9 +7,15 @@ class Kea::InstallGenerator < Rails::Generators::Base
  
   def directories
     empty_directory "app/assets/javascripts/bindings"
+    create_file "app/assets/javascripts/bindings/.keep"
+    empty_directory "app/assets/javascripts/extenders"
+    create_file "app/assets/javascripts/extenders/.keep"
     empty_directory "app/assets/javascripts/initializers"
+    create_file "app/assets/javascripts/initializers/.keep"
     empty_directory "app/assets/javascripts/models"
+    create_file "app/assets/javascripts/models/.keep"
     empty_directory "app/assets/javascripts/services"
+    create_file "app/assets/javascripts/services/.keep"
     empty_directory "app/assets/javascripts/viewmodels"
   end
  
@@ -22,52 +28,70 @@ class Kea::InstallGenerator < Rails::Generators::Base
   end
  
   def application_js
-    insert_into_file "app/assets/javascripts/application.js", "//= require kea/kea\n", :after => "jquery_ujs\n"
+    insert_into_file "app/assets/javascripts/application.js", :after => "jquery_ujs\n" do <<-'JS'
+//= require kea/kea_dependencies
+
+//= require init
+
+//= require kea/kea
+//= require_directory ./bindings
+//= require_directory ./extenders
+//= require_directory ./models
+//= require_directory ./services
+//= require ./viewmodels/main
+//= require_directory ./viewmodels
+
+//= require_directory ./initializers
+    JS
+    end
+    
     append_to_file "app/assets/javascripts/application.js" do <<-'JS'
-      $(document).ready(function() {
-        "use strict";
 
-        $.ajaxSetup({
-          timeout: 30000
-        });
 
-        window.app.page.MainVm = new window.app.viewmodels.Main();
-        
-        var $body = $('body');
-          
-        app.initializers.forEach(function(initializer) {
-          
-          if (initializer.selectors.length === 0) {
-            initializer.callback();
-            return;
-          }
-          
-          initializer.selectors.forEach(function(selector) {
-            if (selector.charAt(0) === '#') {
-              if ($body.attr('id') === selector.slice(1, selector.length)) {
-                initializer.callback();
-              }
-              
-            } else if (selector.charAt(0) === '.') {
-              if ($body.hasClass(selector)) {
-                initializer.callback();
-              }
-            }
-          });
-          
-        });
+$(document).ready(function() {
+  "use strict";
 
-        ko.applyBindings(app.page.MainVm);
-        
-        app.page.MainVm.pageInitComplete(true);
-        
-        if (app.errors.length > 0) {
-          app.errors.forEach(function(error) {
-            app.notify(error.message, error.level);
-          });
+  $.ajaxSetup({
+    timeout: 30000
+  });
+
+  window.app.page.MainVm = new window.app.viewmodels.Main();
+  
+  var $body = $('body');
+    
+  app.initializers.forEach(function(initializer) {
+    
+    if (initializer.selectors.length === 0) {
+      initializer.callback();
+      return;
+    }
+    
+    initializer.selectors.forEach(function(selector) {
+      if (selector.charAt(0) === '#') {
+        if ($body.attr('id') === selector.slice(1, selector.length)) {
+          initializer.callback();
         }
         
-      });
+      } else if (selector.charAt(0) === '.') {
+        if ($body.hasClass(selector)) {
+          initializer.callback();
+        }
+      }
+    });
+    
+  });
+
+  ko.applyBindings(app.page.MainVm);
+  
+  app.page.MainVm.pageInitComplete(true);
+  
+  if (app.errors.length > 0) {
+    app.errors.forEach(function(error) {
+      app.notify(error.message, error.level);
+    });
+  }
+  
+});
     JS
     end
   end
