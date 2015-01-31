@@ -1,0 +1,105 @@
+$primary-highlight-color: #932F6D !default
+$primary-highlight-hover-color: #420039 !default
+$grey-10: #e0e0e0 !default
+$grey-20: #c2c2c2 !default
+$grey-30: #a3a3a3 !default
+$grey-40: #858585 !default
+$base-font-size: 16px !default
+$light: white !default
+
+$standard-action-color: $primary-highlight-color !default
+
+$text-on-light: black !default
+$subtle-text-on-light: $grey-30 !default
+
+$text-on-dark: $light !default
+$subtle-text-on-dark: $grey-30 !default
+
+$standard-border-color-on-light: $grey-20 !default
+$standard-border-color-on-dark: $grey-10 !default
+
+.sherlock-search-bar
+  +display(flex)
+  +flex-flow(row wrap)
+  min-height: 2rem
+  padding: 0.5rem
+  border: 1px solid $grey-30
+  .fragment, .provider-search-field
+    +flex(0 0 auto)
+  .fragment
+    +display(flex)
+    +flex-flow(row nowrap)
+    height: 40px
+    margin-right: 0.5rem
+    border: 2px solid $primary-highlight-color
+    border-radius: 10px
+    .fragment-name, .fragment-predicate, .fragment-search-value, .fragment-remove
+      +flex(0 0 auto)
+    .fragment-name
+      padding: 0 1rem
+      background-color: $primary-highlight-color
+      color: $text-on-dark
+      line-height: 40px
+    .fragment-search-value
+      padding: 0 0.5rem
+      font-size: $base-font-size
+      border: none
+      color: $primary-highlight-color
+      border-left: 2px solid $primary-highlight-color
+      background-color: none
+      &:focus
+        outline: none
+    .fragment-search-value-display
+      padding: 0 1rem
+      font-size: $base-font-size
+      border: none
+      color: $primary-highlight-color
+      border-left: 2px solid $primary-highlight-color
+      background-color: none
+      line-height: 40px
+    select.fragment-search-value
+      +flex(0 1 auto)
+    .fragment-remove
+      i
+        color: $primary-highlight-color
+      &:hover
+        color: $primary-highlight-hover-color
+  .provider-search-field
+    position: relative
+    & > input
+      line-height: 40px
+      font-size: $base-font-size
+      border: none
+      &:focus
+        outline: none
+    .provider-search-dropdown
+      display: none
+      position: absolute
+      z-index: 2
+      width: 200px
+      background-color: $light
+      border: 1px solid $grey-30
+      &.active
+        display: block
+      ul
+        margin: 0
+        list-style-type: none
+        li
+          padding: 0.5rem
+          cursor: pointer
+          &.has-focus, &:hover
+            background-color: $standard-action-color
+            color: $text-on-dark
+      article
+        position: relative
+        h2
+          padding: 0.5rem
+          margin-bottom: 0
+          padding-bottom: 0
+          border-top: 1px solid $standard-border-color-on-light
+          font-size: $base-font-size
+          color: $subtle-text-on-light
+        .activity-indicator
+          position: absolute
+          top: 0.5rem
+          right: 0.5rem

@@ -8,4 +8,7 @@
 //= require ./overlay/overlay_template
 //= require ./overlay/child_vm_overlay
 
+//= require ./viewmodels/sherlock
+//= require ./sherlock/base_provider
+
 //= require ./initializers/base
