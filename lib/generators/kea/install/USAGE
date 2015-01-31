@@ -1,8 +1,9 @@
 Description:
-    Explain the generator
+    Installs Kea, optionally into a namespace such as 'backend' or 'frontend'
 
 Example:
-    rails generate install Thing
+    rails generate kea:install
 
-    This will create:
-        what/will/it/create
+      or
+      
+    rails generate kea:install backend

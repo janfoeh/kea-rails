@@ -1,34 +1,35 @@
 class Kea::InstallGenerator < Rails::Generators::Base
   source_root File.expand_path('../templates', __FILE__)
+  argument :namespace, type: :string, required: false, default: nil
  
   def init_js
-    copy_file "init.js", "app/assets/javascripts/init.js"
+    copy_file "init.js", namespaced_path("app/assets/javascripts/", "init.js")
   end
  
   def directories
-    empty_directory "app/assets/javascripts/bindings"
-    create_file "app/assets/javascripts/bindings/.keep"
-    empty_directory "app/assets/javascripts/extenders"
-    create_file "app/assets/javascripts/extenders/.keep"
-    empty_directory "app/assets/javascripts/initializers"
-    create_file "app/assets/javascripts/initializers/.keep"
-    empty_directory "app/assets/javascripts/models"
-    create_file "app/assets/javascripts/models/.keep"
-    empty_directory "app/assets/javascripts/services"
-    create_file "app/assets/javascripts/services/.keep"
-    empty_directory "app/assets/javascripts/viewmodels"
+    empty_directory namespaced_path("app/assets/javascripts", "bindings")
+    create_file     namespaced_path("app/assets/javascripts", "bindings/.keep")
+    empty_directory namespaced_path("app/assets/javascripts", "extenders")
+    create_file     namespaced_path("app/assets/javascripts", "extenders/.keep")
+    empty_directory namespaced_path("app/assets/javascripts", "initializers")
+    create_file     namespaced_path("app/assets/javascripts", "initializers/.keep")
+    empty_directory namespaced_path("app/assets/javascripts", "models")
+    create_file     namespaced_path("app/assets/javascripts", "models/.keep")
+    empty_directory namespaced_path("app/assets/javascripts", "services")
+    create_file     namespaced_path("app/assets/javascripts", "services/.keep")
+    empty_directory namespaced_path("app/assets/javascripts", "viewmodels")
   end
  
   def global_initializer
-    copy_file "global.js", "app/assets/javascripts/initializers/global.js"
+    copy_file "global.js", namespaced_path("app/assets/javascripts/", "initializers/global.js")
   end
   
   def main_viewmodel
-    copy_file "main.js", "app/assets/javascripts/viewmodels/main.js"
+    copy_file "main.js", namespaced_path("app/assets/javascripts/", "viewmodels/main.js")
   end
  
   def application_js
-    insert_into_file "app/assets/javascripts/application.js", :after => "jquery_ujs\n" do <<-'JS'
+    insert_into_file namespaced_path("app/assets/javascripts", "application.js"), :after => "jquery_ujs\n" do <<-'JS'
 //= require kea/kea_dependencies
 
 //= require init
@@ -45,7 +46,7 @@ class Kea::InstallGenerator < Rails::Generators::Base
     JS
     end
     
-    append_to_file "app/assets/javascripts/application.js" do <<-'JS'
+    append_to_file namespaced_path("app/assets/javascripts", "application.js") do <<-'JS'
 
 
 $(document).ready(function() {
@@ -97,7 +98,7 @@ $(document).ready(function() {
   end
    
   def layout_setup
-    copy_file "application.html.erb", "app/views/layouts/application.html.erb"
+    copy_file "application.html.erb", "app/views/layouts/#{namespace ? namespace.underscore : "application"}.html.erb"
   end
   
   def helpers
@@ -105,4 +106,11 @@ $(document).ready(function() {
       "  helper Kea::ApplicationHelper\n"
     end
   end
+  
+    private
+    
+  def namespaced_path(path, suffix = nil)
+    File.join [path, namespace.underscore, suffix].compact
+  end
+  
 end
