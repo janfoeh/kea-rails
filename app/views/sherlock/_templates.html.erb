@@ -1,0 +1,48 @@
+<script id="sherlock-container-template" type="text/html">
+  <!-- ko foreach: activeFragments -->
+    <div class="fragment" data-bind="template: {name: provider.fragment_template_name, afterRender: function(nodes, fragment) { if (!fragment.searchValue()) { $(nodes).filter('[data-focus-after-render]').focus(); } }}, click: function(fragment, ev) { ev.stopPropagation(); return true; }"></div>
+  <!-- /ko -->
+  <div data-bind="sherlockProviderSearch: $data" class="provider-search-field">
+    <input type="text" data-bind="value: providerSearchTerm, valueUpdate: 'keyup'">
+    <div class="provider-search-dropdown">
+      <ul data-bind="foreach: orderedFragmentsForSearchTerm">
+        <li data-bind="html: displayString, click: $parent.selectFragment.bind($parent, $data), css: { 'has-focus': hasFocus }, clickBubble: false"></li>
+      </ul>
+      <div data-bind="foreach: liveSearchProviders, visible: showLiveSearchWidgets">
+        <!-- ko template: livesearch_template_name --><!-- /ko -->
+      </div>
+    </div>
+  </div>
+</script>
+
+<script id="sherlock-base-fragment-template" type=="text/html">
+  <span class="fragment-name" data-bind="text: provider.displayName + ':'"></span>
+  <!-- ko if: changeable -->
+  <input type="text" data-bind="value: searchValue" data-focus-after-render="true" class="fragment-search-value">
+  <!-- /ko -->
+  <!-- ko if: !changeable -->
+  <div class="fragment-search-value-display" data-bind="text: searchValueDisplay"></div>
+  <!-- /ko -->
+  <button class="icon-button fragment-remove" data-bind="click: $parent.removeFragment.bind($parent, $data), clickBubble: false"><i class="icon-cancel-circled"></i></button>
+</script>
+
+<script id="sherlock-base-dropdown-fragment-template" type=="text/html">
+  <span class="fragment-name" data-bind="text: provider.displayName + ':'"></span>
+  <!-- ko if: changeable -->
+  <select class="fragment-search-value" data-bind="value: searchValue, options: searchValueOptions, optionsText: 'label', optionsValue: 'value'" data-focus-after-render="true"></select>
+  <!-- /ko -->
+  <!-- ko if: !changeable -->
+  <div class="fragment-search-value-display" data-bind="text: searchValueDisplay"></div>
+  <!-- /ko -->
+  <button class="icon-button fragment-remove" data-bind="click: $parent.removeFragment.bind($parent, $data), clickBubble: false"><i class="icon-cancel-circled"></i></button>
+</script>
+
+<script id="sherlock-base-livesearch-template" type=="text/html">
+  <article data-bind="visible: liveSearchVisible">
+    <h2 data-bind="text: displayName"></h2>
+    <span data-bind="activity: liveSearchAjaxActivity" class="activity-indicator"></span>
+    <ul data-bind="foreach: liveSearchFragments">
+      <li data-bind="html: displayString, click: $parents[1].selectFragment.bind($parents[1], $data), css: { 'has-focus': hasFocus }, clickBubble: false"></li>
+    </ul>
+  </article>
+</script>
