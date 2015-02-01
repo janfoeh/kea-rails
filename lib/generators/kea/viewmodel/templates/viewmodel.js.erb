@@ -1,4 +1,4 @@
-(function(app, ko) {
+(function(app, kea, ko) {
   "use strict";
 
   var viewmodel_name = '<%= name.camelize %>',
@@ -70,4 +70,4 @@
 
   app.viewmodels[viewmodel_name] = ViewmodelClass;
 
-})(window.app, ko);
+})(window.app, window.kea, ko);
