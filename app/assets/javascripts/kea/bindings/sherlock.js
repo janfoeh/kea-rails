@@ -4,12 +4,12 @@
   ko.bindingHandlers.sherlock = {
     init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
       var $container  = $(element),
-          options     = ko.unwrap(valueAccessor()),
+          options     = typeof ko.unwrap(valueAccessor()) === 'object' ? ko.unwrap(valueAccessor()) : {},
           $providerSearchField,
           sherlockVm;
       
       sherlockVm = new app.sherlock.SherlockVm();
-      sherlockVm.setup();
+      sherlockVm.setup(options);
       
       sherlockVm.params.subscribe(function(params) {
         bindingContext.$data.sherlockParams(params);

@@ -9,11 +9,12 @@
 
     var that = this;
 
-    this.providers                        = ko.observableArray([]);
-    this.providerSearchTerm               = ko.observable('').extend({ rateLimit: { timeout: 500, method: "notifyWhenChangesStop" } });
-    this.providerSearchActive             = ko.observable(false);
-    this.showLiveSearchWidgets            = ko.observable(false);
-    this.activeFragments                  = ko.observableArray([]);
+    this.options               = ko.observable();
+    this.providers             = ko.observableArray([]);
+    this.providerSearchTerm    = ko.observable('').extend({ rateLimit: { timeout: 500, method: "notifyWhenChangesStop" } });
+    this.providerSearchActive  = ko.observable(false);
+    this.showLiveSearchWidgets = ko.observable(false);
+    this.activeFragments       = ko.observableArray([]);
     
     this.params = ko.computed(function() {
       var params = {};
@@ -216,10 +217,20 @@
       }
     });
     
-    this.setup = function setup() {
-      for (var providerName in app.sherlock.providers) {
-        if (app.sherlock.providers.hasOwnProperty(providerName)) {
+    this.setup = function setup(options) {
+      that.options(options);
+      
+      if (that.options().providers) {
+        
+        that.options().providers.forEach(function(providerName) {
           that.providers.push( new app.sherlock.providers[providerName]() );
+        });
+        
+      } else {
+        for (var providerName in app.sherlock.providers) {
+          if (app.sherlock.providers.hasOwnProperty(providerName)) {
+            that.providers.push( new app.sherlock.providers[providerName]() );
+          }
         }
       }
     };
