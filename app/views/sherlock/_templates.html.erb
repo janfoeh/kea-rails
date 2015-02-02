@@ -18,7 +18,13 @@
 <script id="sherlock-base-fragment-template" type=="text/html">
   <span class="fragment-name" data-bind="text: provider.displayName + ':'"></span>
   <!-- ko if: changeable -->
-  <input type="text" data-bind="value: searchValue" data-focus-after-render="true" class="fragment-search-value">
+    <!-- ko if: predicateOptions().length > 0 -->
+      <select class="fragment-predicate" data-bind="value: predicate, options: predicateOptions, optionsText: 'label', optionsValue: 'value'" data-focus-after-render="true"></select>
+      <input type="text" data-bind="value: searchValue" class="fragment-search-value">
+    <!-- /ko -->
+    <!-- ko if: predicateOptions().length === 0 -->
+      <input type="text" data-bind="value: searchValue" data-focus-after-render="true" class="fragment-search-value">
+    <!-- /ko -->
   <!-- /ko -->
   <!-- ko if: !changeable -->
   <div class="fragment-search-value-display" data-bind="text: searchValueDisplay"></div>
