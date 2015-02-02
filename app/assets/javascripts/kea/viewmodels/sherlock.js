@@ -218,7 +218,7 @@
     });
     
     this.setup = function setup(options) {
-      that.options(options);
+      that.options(options || {});
       
       if (that.options().providers) {
         
@@ -227,11 +227,13 @@
         });
         
       } else {
-        for (var providerName in app.sherlock.providers) {
-          if (app.sherlock.providers.hasOwnProperty(providerName)) {
-            that.providers.push( new app.sherlock.providers[providerName]() );
-          }
-        }
+        
+       for (var providerName in app.sherlock.providers) {
+         if (app.sherlock.providers.hasOwnProperty(providerName)) {
+           that.providers.push( new app.sherlock.providers[providerName]() );
+         }
+       }
+
       }
     };
   };
