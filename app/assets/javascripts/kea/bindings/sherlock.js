@@ -9,7 +9,7 @@
           sherlockVm;
       
       sherlockVm = new app.sherlock.SherlockVm();
-      sherlockVm.setup();
+      sherlockVm.setup(options);
       
       sherlockVm.params.subscribe(function(params) {
         bindingContext.$data.sherlockParams(params);
