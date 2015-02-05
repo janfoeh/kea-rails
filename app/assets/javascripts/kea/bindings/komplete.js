@@ -1,4 +1,4 @@
-(function(ko, $, app) {
+(function(ko, $, app, kea) {
   "use strict";
 
   ko.bindingHandlers.komplete = {
@@ -79,7 +79,7 @@
         
         this.requestInProgress(true);
         
-        app.services.Base._request('GET', this.url, { q: this.searchTerm() })
+        kea.services.Base._request('GET', this.url, { q: this.searchTerm() })
           .done(function(response) {
             that.searchResults( that.parseResults(response) );
             
@@ -169,4 +169,4 @@
     }
   };
 
-})(ko, $, window.app);
+})(ko, $, window.app, window.kea);
