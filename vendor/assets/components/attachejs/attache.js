@@ -54,8 +54,10 @@
       'afterCreate':  [],
       'beforeShow':   [],
       'afterShow':    [],
+      'afterHide':    [],
       'groupMemberBeforeShow':  [],
-      'groupMemberAfterShow':   []
+      'groupMemberAfterShow':   [],
+      'groupMemberAfterHide':   []
     };
 
     if (typeof callbacks !== 'undefined') {
@@ -144,6 +146,7 @@
         _hasCallbackFor,
         _executeCallbacksFor,
         _createPopover,
+        _removePopover,
         _getAnchorPosition,
         _setPopoverPosition,
         _setPositionLabel,
@@ -159,6 +162,7 @@
       popoverClass: "",
       cssTransitionSupport: true,
       allowParallelUse: true,
+      disposable: false,
       debug: true
     };
 
@@ -196,11 +200,28 @@
       // use a timeout to make sure adding and removing .activating is not
       // coalesced into a single step
       setTimeout(function(){
-        that.$popover.removeClass('activating').addClass('active');
+        
+        // worst case scenario: our popover has already been removed again
+        if ( !this.exists() ) {
+          return false;
+        }
+        
+        if (that.options.cssTransitionSupport) {
+          
+          that.positionPopover();
+          
+          this.$popover.one('transitionEnd webkitTransitionEnd', function() {
+            _executeCallbacksFor.call(that, 'afterShow', that.$anchorElement, that.$popover);
+          });
+          
+          this.$popover.removeClass('activating').addClass('active');
+          
+        } else {
+          that.$popover.removeClass('activating').addClass('active');
+          that.positionPopover();
+          _executeCallbacksFor.call(this, 'afterShow', this.$anchorElement, this.$popover);
+        }
 
-        that.positionPopover();
-
-        _executeCallbacksFor.call(this, 'afterShow', this.$anchorElement, this.$popover);
       }.bind(this), 1);
     };
 
@@ -211,14 +232,29 @@
         return false;
       }
 
-      this.$popover.removeClass('active');
-
       if (this.options.cssTransitionSupport) {
-        this.$popover.addClass('deactivating');
 
         this.$popover.one('transitionEnd webkitTransitionEnd', function() {
           that.$popover.removeClass('deactivating');
+
+          if (that.options.disposable) {
+            _removePopover.call(that);
+          }
+          
+          _executeCallbacksFor.call(that, 'afterHide', that.$anchorElement, that.$popover);
         });
+        
+        this.$popover.removeClass('active').addClass('deactivating');
+        
+      } else {
+        
+        this.$popover.removeClass('active');
+        
+        if (this.options.disposable) {
+          _removePopover.call(this);
+        }
+        
+        _executeCallbacksFor.call(this, 'afterHide', this.$anchorElement, this.$popover);
       }
     };
 
@@ -236,6 +272,23 @@
       $('body').append(this.$popover);
       _executeCallbacksFor.call(this, 'afterCreate', this.$anchorElement, this.$popover);
     };
+    
+    /**
+     * Remove the popover markup from the DOM
+     *
+     * @memberOf Attache
+     * @private
+     */
+    _removePopover = function _removePopover() {
+      if ( !this.exists() ) {
+        return;
+      }
+      
+      this.$popover.remove();
+      this.$popover = null;
+      
+      // _executeCallbacksFor.call(this, 'afterCreate', this.$anchorElement, this.$popover);
+    };
 
     /**
      * Position or reposition the popover. If positioning fails, i.e. the popover is off-viewport, retry with options.alternativePositions
@@ -251,6 +304,10 @@
       var that    = this,
           success = false,
           position;
+
+      if ( !this.exists() ) {
+        return false;
+      }
 
       if (typeof positionLabel === 'undefined') {
         positionLabel = this.currentPositionLabel;
@@ -432,7 +489,7 @@
      * @returns {Boolean}
      */
     exists = function exists() {
-      return typeof this.$popover !== 'undefined' && this.$popover.length === 1;
+      return typeof this.$popover !== 'undefined' && this.$popover !== null && this.$popover.length === 1;
     };
 
     /**
@@ -474,7 +531,7 @@
         return false;
       }
 
-      this.$popover.remove();
+      _removePopover.call(this);
     };
 
     /**
