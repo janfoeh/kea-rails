@@ -25,6 +25,20 @@ module Kea
       content_for :json_cache, "window.app.cache['#{path}'] = #{content};\n".html_safe
     end
     
+    def knockout_template(name, partial: nil, &block)
+      content_for :knockout_templates do
+        if partial
+          content_tag :script, type: "text/html", id: name do
+            render partial: partial
+          end
+        else
+          content_tag :script, type: "text/html", id: name do
+            capture(&block)
+          end
+        end
+      end
+    end
+    
     def overlay_template(name, partial: nil, &block)
       content_for :knockout_templates do
         if partial
