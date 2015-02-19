@@ -17,7 +17,7 @@
         });
       }
 
-      if (setupContext && typeof childVm.setup === 'function') {
+      if (typeof childVm.setup === 'function') {
         childVm.setup(setupContext);
       }
 
