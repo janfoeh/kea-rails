@@ -12,7 +12,9 @@ module Kea
       options[:scope]       ||= self
       options[:url_options] ||= url_options
       
-      target.active_model_serializer.new(target, options).to_json
+      serializer = options[:serializer] || target.active_model_serializer
+      
+      serializer.new(target, options).to_json
     end
 
     def cache_json(object, path = nil, options = {})
