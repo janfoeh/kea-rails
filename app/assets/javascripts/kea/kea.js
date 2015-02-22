@@ -1,5 +1,6 @@
 //= require_directory ./bindings
 //= require_directory ./extenders
+//= require_directory ./components
 //= require ./models/base
 //= require ./services/base
 //= require ./viewmodels/base

@@ -1,4 +1,4 @@
-//= require knockout-3.2.0-debug
+//= require knockout-3.3.0-debug
 
 //= require_directory ../../../../vendor/assets/javascripts/.
 
