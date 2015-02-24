@@ -11,22 +11,22 @@
 
 })(ko, $);
 
-(function(ko, $) {
-  "use strict";
+// (function(ko, $) {
+//   "use strict";
 
-  ko.components.register('confirmation-button', {
-      viewModel: {
-        createViewModel: function createViewModel(params, componentInfo) {
-          var ConfirmationButtonVm;
+//   ko.components.register('confirmation-button', {
+//       viewModel: {
+//         createViewModel: function createViewModel(params, componentInfo) {
+//           var ConfirmationButtonVm;
           
-          ConfirmationButtonVm = function ConfirmationButtonVm(params) {
+//           ConfirmationButtonVm = function ConfirmationButtonVm(params) {
             
-          };
+//           };
           
-          return new ConfirmationButtonVm(params);
-        }
-      },
-      template: 'x'
-  });
+//           return new ConfirmationButtonVm(params);
+//         }
+//       },
+//       template: 'x'
+//   });
 
-})(ko, $);
+// })(ko, $);
