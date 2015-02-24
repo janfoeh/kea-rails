@@ -27,6 +27,10 @@
         }
       });
       
+      if (this.options() && this.options().fixedParameters) {
+        params = $.extend({}, params, this.options().fixedParameters);
+      }
+      
       return params;
       
     }, this, {deferEvaluation: true});

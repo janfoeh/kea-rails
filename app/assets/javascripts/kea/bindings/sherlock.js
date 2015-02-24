@@ -9,11 +9,12 @@
           sherlockVm;
       
       sherlockVm = new app.sherlock.SherlockVm();
-      sherlockVm.setup(options);
       
       sherlockVm.params.subscribe(function(params) {
         bindingContext.$data.sherlockParams(params);
       });
+      
+      sherlockVm.setup(options);
       
       ko.renderTemplate('sherlock-container-template', sherlockVm, {}, element);
       
