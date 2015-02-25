@@ -27,8 +27,14 @@
         }
       });
       
-      if (this.options() && this.options().fixedParameters) {
-        params = $.extend({}, params, this.options().fixedParameters);
+      if ( this.options() ) {
+        if (this.options().presetParameters) {
+          params = $.extend({}, this.options().presetParameters, params);
+        }
+        
+        if (this.options().fixedParameters) {
+          params = $.extend({}, params, this.options().fixedParameters);
+        }
       }
       
       return params;
