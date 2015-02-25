@@ -5,8 +5,10 @@
     init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
       var $element        = $(element);
       
-      $element.on('click', function() {
+      $element.on('click', function(e) {
         bindingContext.overlay.hide();
+        
+        e.preventDefault();
       });
     }
   };
