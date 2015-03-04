@@ -60,12 +60,12 @@
 
     this.isValidatable = ko.observable(false);
 
-    this.makeValidatable = function makeValidatable() {
+    this.makeValidatable = function makeValidatable(options) {
       if (DEBUG) {
         console.assert(this.attachValidators, "object does not implement attachValidators");
       }
 
-      this.attachValidators();
+      this.attachValidators(options);
       this.isValidatable(true);
     };
 
