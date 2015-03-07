@@ -2,14 +2,133 @@
   "use strict";
 
   var Base,
+      Serializable,
       Validatable;
 
   Base = function Base() {
-
+    
+    this.id            = null;
+    this.resource_path = null;
+    
+    this.persisted = ko.observable(false);
+    
+    this._attributeNames                    = [];
+    this._deserializableAttributes          = [];
+    this._serializableAttributes            = [];
+    this._deserializableAssociations        = {};
+    this._serializableAssociations          = {};
+    this._deserializableHasManyAssociations = {};
+    this._serializableHasManyAssociations   = {};
+    
+    this.deserializationOptions = { attributes: {} };
+    this.serializationOptions   = { attributes: {} };
   };
 
   Base.prototype._modelName = function _modelName() {
     console.error("Model does not implement _modelName");
+  };
+  
+  Base.prototype.addAttribute = function addAttribute(name, options) {
+    options             = options || {};
+    options.array       = typeof options.array !== 'undefined' ? options.array : false;
+    options.deserialize = typeof options.deserialize !== 'undefined' ? options.deserialize : true;
+    options.serialize   = typeof options.serialize !== 'undefined' ? options.serialize : true;
+    
+    if (options.array) {
+      this[name] = ko.observableArray([]);
+    } else {
+      this[name] = ko.observable(options.value);
+    }
+    
+    if (options.deserialize) {
+      this._deserializableAttributes.push(name);
+      
+      if (typeof options !== 'boolean') {
+        this.deserializationOptions.attributes[name] = options.deserialize;
+      }
+    }
+    
+    if (options.serialize) {
+      this._serializableAttributes.push(name);
+      
+      if (typeof options !== 'boolean') {
+        this.serializationOptions.attributes[name] = options.serialize;
+      }
+    }
+  };
+  
+  Base.prototype.unserializableAttributes = function unserializableAttributes(attributeNames) {
+    attributeNames.forEach(function(name) {
+      this.addAttribute(name, {serialize: false});
+    }, this);
+  };
+  
+  Base.prototype.serializableAttributes = function unserializableAttributes(attributeNames) {
+    attributeNames.forEach(function(name) {
+      this.addAttribute(name);
+    }, this);
+  };
+  
+  Base.prototype.addAssociation = function addAssociation(modelName, attributeName, type, options) {
+    var deserializationKey,
+        serializationKey;
+        
+    options             = options || {};
+    options.deserialize = typeof options.deserialize !== 'undefined' ? options.deserialize : true;
+    options.serialize   = typeof options.serialize !== 'undefined' ? options.serialize : true;
+    
+    if (type === 'hasOne') {
+      this[attributeName] = ko.observable();
+      deserializationKey  = '_deserializableAssociations';
+      serializationKey    = '_serializableAssociations';
+      
+    } else if (type === 'hasMany') {
+      this[attributeName] = ko.observableArray([]);
+      deserializationKey  = '_deserializableHasManyAssociations';
+      serializationKey    = '_serializableHasManyAssociations';
+      
+    } else {
+      console.error('unsupported association type %s', type);
+      return;
+    }
+    
+    if (options.deserialize) {
+      this[deserializationKey][attributeName] = modelName;
+      
+      if (typeof options !== 'boolean') {
+        this.deserializationOptions.attributes[name] = options.deserialize;
+      }
+    }
+    
+    if (options.serialize) {
+      this[serializationKey][attributeName] = modelName;
+      
+      if (typeof options !== 'boolean') {
+        this.serializationOptions.attributes[name] = options.serialize;
+      }
+    }
+  };
+  
+  Base.prototype.hasOne = function hasOne(modelName, attributeName, options) {
+    if (typeof attributeName === 'undefined') {
+      attributeName = modelName.toLowerCase();
+    }
+    
+    this.addAssociation(modelName, attributeName, 'hasOne', options);
+  };
+  
+  Base.prototype.hasMany = function hasMany(modelName, attributeName, options) {
+    this.addAssociation(modelName, attributeName, 'hasMany', options);
+  };
+  
+  Base.prototype.forEachAssocation = function forEachAssocation(type, callback) {
+    var key = '_' + type + 'Associations';
+    
+    for (var attributeName in this[key]) {
+      if ( this[key].hasOwnProperty(attributeName) ) {
+        callback.call(this, attributeName, this[key][attributeName]);
+      }
+    }
   };
 
   Base.prototype.service = function service() {
@@ -20,14 +139,6 @@
     return app.services[ this._modelName() ];
   };
 
-  Base.prototype.fromJSON = function fromJSON(json) {
-    console.error("object does not implement fromJSON: %O", this);
-  };
-
-  Base.prototype.serialize = function serialize() {
-    console.error("object does not implement serialize: %O", this);
-  };
-
   Base.prototype.update = function update(params) {
     var that = this,
         deferred;
@@ -35,7 +146,7 @@
     deferred = this.service()
       .update(that, params)
       .done(function(data) {
-        that.fromJSON(data);
+        that.deserialize(data);
       });
 
     return deferred;
@@ -52,7 +163,125 @@
 
     });
   };
+  
+  Base.prototype.deserialize = function deserialize(data) {
+    this.persisted(true);
+    
+    this.id            = data.id;
+    this.resource_path = data.resource_path;
+    
+    this._deserializableAttributes.forEach(function(name) {
+      this[name]( data[name] );
+    }, this);
+    
+    this.forEachAssocation('deserializable', function(attributeName, modelName) {
+      if ( data[attributeName] ) {
+        this[attributeName]( new app.models[modelName](data[attributeName]) );
+      }
+    });
+    
+    this.forEachAssocation('deserializableHasMany', function(attributeName, modelName) {
+      if ( data[attributeName] ) {
+        this[attributeName].removeAll();
+        
+        data[attributeName].forEach(function(associationData) {
+          this[attributeName].push( new app.models[modelName](associationData) );
+        }, this);
+      }
+    });
+    
+    if (typeof this.fromJS === 'function') {
+      this.fromJS(data);
+    }
+  };
+  
+  Base.prototype.serialize = function serialize(options) {
+    var result = {},
+        defaultOptions,
+        attributeList,
+        attributeOptions,
+        isBlank,
+        shouldIncludeAttribute;
+    
+    defaultOptions = {
+      includeId: false,
+      attributes: {}
+    };
+    
+    options = $.extend({}, defaultOptions, this.serializationOptions, options);
+    
+    attributeOptions = function attributeOptions(attributeName) {
+      return options.attributes[attributeName] || {};
+    };
+    
+    isBlank = function isBlank(value) {
+      return typeof value === 'undefined' || value === null || value === '' || (Array.isArray(value) && value.length === 0 );
+    };
+    
+    shouldIncludeAttribute = function shouldIncludeAttribute(name, value) {
+      var skipBlank = typeof attributeOptions(name).skipBlank !== 'undefined' ? attributeOptions(name).skipBlank : options.skipBlank;
+      
+      if ( this._serializeableAttributes.indexOf(name) === -1) {
+        return false;
+      } else if (skipBlank && isBlank(value)) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+    
+    if (options.includeId) {
+      result.id = this.id;
+    }
+    
+    if (this._destroy) {
+      result._destroy = true;
+    }
+    
+    this._serializeableAttributes.forEach(function(name) {
+      if (typeof this.associations[name] !== 'undefined' || typeof this.hasManyAssociations[name] !== 'undefined') {
+        return;
+      }
+      
+      var value = this[name]();
+      
+      if (shouldIncludeAttribute(name, value)) {
+        result[name] = value;
+      }
+    }, this);
+    
+    this.forEachAssocation('serializable', function(attributeName, modelName) {
+      var value,
+          key;
+      
+      if (attributeOptions(attributeName).idOnly) {
+        value = this[attributeName]() ? this[attributeName]().id : null;
+        key   = attributeName + '_id';
+      } else {
+        value = this[attributeName]().serialize();
+        key   = attributeName;
+      }
 
+      if (shouldIncludeAttribute(attributeName, value)) {
+        result[key] = value;
+      }
+    });
+    
+    this.forEachHasManyAssocation('serializableHasMany', function(attributeName, modelName) {
+      var value = this[attributeName]().map(function(association) { return association.serialize(); } );
+      
+      if (shouldIncludeAttribute(attributeName, value)) {
+        result[attributeName + '_attributes'] = value;
+      }
+    });
+    
+    if (typeof this.toJS === 'function') {
+      result = this.toJS(result);
+    }
+    
+    return result;
+  };
+  
   kea.models.Base = Base;
 
   Validatable = function Validatable() {
