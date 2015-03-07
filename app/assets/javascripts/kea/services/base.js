@@ -133,11 +133,11 @@
 
       } else {
         
-        if (typeof modelObject.refreshFromJSON === 'function') {
+        if (typeof modelObject.refreshFromJS === 'function') {
           modelObject.refresh(data);
           
         } else {
-          modelObject.fromJSON(data);
+          modelObject.deserialize(data);
         }
         
         return modelObject;
