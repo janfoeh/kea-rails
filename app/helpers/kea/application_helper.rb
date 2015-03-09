@@ -14,7 +14,11 @@ module Kea
       
       serializer = options[:serializer] || target.active_model_serializer
       
-      serializer.new(target, options).to_json
+      if target.is_a?(ActiveRecord::Relation)
+        ActiveModel::ArraySerializer.new(target, each_serializer: serializer, scope: self).to_json
+      else
+        serializer.new(target, options).to_json
+      end
     end
 
     def cache_json(object, path = nil, options = {})
