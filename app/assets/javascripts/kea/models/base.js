@@ -313,7 +313,7 @@
     this.forEachValidatableField = function forEachValidatableField(callback) {
       ko.utils.arrayForEach(this.validatableFields(), function(field) {
         if (that[field].isValidatable) {
-          callback.call(that, that[field]);
+          callback.call(that, that[field], field);
         }
       });
     };
@@ -325,7 +325,7 @@
         var association = that[association_name]();
         
         if (association.isValidatable && association.isValidatable()) {
-          callback.call(that, association);
+          callback.call(that, association, association_name);
         }
       });
 
@@ -365,15 +365,15 @@
     this.validationMessages = ko.computed(function validationMessages() {
       var messages = [];
 
-      that.forEachValidatableField(function(observable) {
+      that.forEachValidatableField(function(observable, fieldName) {
         if (observable.hasError()) {
-          messages.push(observable.validationMessage());
+          messages.push(fieldName + ': ' + observable.validationMessage());
         }
       }, this);
 
-      that.forEachValidatableAssociation(function(association) {
+      that.forEachValidatableAssociation(function(association, name) {
         if (association.hasErrors()) {
-          messages = messages.concat(association.validationMessages());
+          messages = name + ': ' + messages.concat(association.validationMessages());
         }
       });
 
