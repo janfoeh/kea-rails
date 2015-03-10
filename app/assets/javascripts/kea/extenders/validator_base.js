@@ -33,6 +33,14 @@
         target.validate.apply(target, args);
       };
     }
+    
+    if (typeof target.isBlank === 'undefined') {
+      target.isBlank = function isBlank(value) {
+        value = arguments.length === 0 ? target() : value;
+        
+        return typeof value === 'undefined' || value === null || value === '';
+      };
+    }
 
     if (typeof target.markValid === 'undefined') {
       target.markValid = function markValid() {
