@@ -196,7 +196,8 @@
   };
   
   Base.prototype.serialize = function serialize(options) {
-    var result = {},
+    var that = this,
+        result = {},
         defaultOptions,
         attributeList,
         attributeOptions,
@@ -221,7 +222,7 @@
     shouldIncludeAttribute = function shouldIncludeAttribute(name, value) {
       var skipBlank = typeof attributeOptions(name).skipBlank !== 'undefined' ? attributeOptions(name).skipBlank : options.skipBlank;
       
-      if ( this._serializeableAttributes.indexOf(name) === -1) {
+      if ( that._serializableAttributes.indexOf(name) === -1) {
         return false;
       } else if (skipBlank && isBlank(value)) {
         return false;
@@ -238,11 +239,7 @@
       result._destroy = true;
     }
     
-    this._serializeableAttributes.forEach(function(name) {
-      if (typeof this.associations[name] !== 'undefined' || typeof this.hasManyAssociations[name] !== 'undefined') {
-        return;
-      }
-      
+    this._serializableAttributes.forEach(function(name) {
       var value = this[name]();
       
       if (shouldIncludeAttribute(name, value)) {
@@ -267,7 +264,7 @@
       }
     });
     
-    this.forEachHasManyAssocation('serializableHasMany', function(attributeName, modelName) {
+    this.forEachAssocation('serializableHasMany', function(attributeName, modelName) {
       var value = this[attributeName]().map(function(association) { return association.serialize(); } );
       
       if (shouldIncludeAttribute(attributeName, value)) {
