@@ -43,26 +43,33 @@ class Kea::ModelGenerator < Rails::Generators::NamedBase
   end
   
   def attribute_initializers
-    max_string_length        = 0
-    attribute_initializers   = []
-    association_initializers = []
+    unserializable_attributes = []
+    serializable_attribute_strings = ""
+    attribute_initializers    = []
     
-    attribute_initializers = @model_attributes.collect do |attribute_name|
-      ["this.#{attribute_name}", "ko.observable();"]
+    ['created_at', 'updated_at'].each do |attribute|
+      unserializable_attributes << attribute if @klass.attribute_names.include?(attribute)
     end
     
-    association_initializers = @model_associations.collect do |assoc|
-      if assoc.macro == :has_one
-        ["this.#{assoc.name}", "ko.observable();"]
-      elsif assoc.macro == :has_many
-        ["this.#{assoc.name}", "ko.observableArray([]);"]
-      end
+    attribute_initializers << "this.unserializable_attributes(#{unserializable_attributes.collect { |a| "'#{a}'"}.join(", ")});"
+    
+    @model_attributes.in_groups_of(5, false) do |group|
+      serializable_attribute_strings << '      ' + group.collect { |attribute| "'#{attribute}'" }.join(', ') + ",\n"
     end
     
-    initializers = attribute_initializers + association_initializers
+    serializable_attribute_strings.gsub!(/,\n\z/, "\n")
     
-    max_string_length = initializers.map { |a| a.first.length }.max
+    attribute_initializers << "this.serializable_attributes(\n#{serializable_attribute_strings}    );"
     
-    initializers.map { |i| [i.first.ljust(max_string_length + 1), " = ", i.last].join('') }
+    @model_associations.each do |assoc|
+      attribute_initializers << case assoc.macro
+                                when :has_one
+                                  "this.hasOne('#{assoc.name.to_s.singularize.camelize}');"
+                                when :has_many
+                                  "this.hasMany('#{assoc.name.to_s.singularize.camelize}', '#{assoc.name}');"
+                                end
+    end
+    
+    attribute_initializers
   end
 end
