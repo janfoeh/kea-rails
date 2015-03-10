@@ -7,6 +7,7 @@
       var defaults = {
         message: "",
         validator: function(v) {},
+        skipBlank: false,
         dependencies: []
       };
 
@@ -14,8 +15,14 @@
    
       target.validate = function validate(newValue) {
         var validatableValue  = typeof newValue === 'undefined' ? target() : newValue,
-            validatorResponse = options.validator(validatableValue),
+            validatorResponse,
             validatorResponseHandler;
+
+        if (options.skipBlank && target.isBlank(validatableValue)) {
+          return;
+        }
+
+        validatorResponse = options.validator(validatableValue);
 
         validatorResponseHandler = function validatorResponseHandler(response) {
           var result, message;
