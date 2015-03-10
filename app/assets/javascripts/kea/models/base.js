@@ -255,7 +255,7 @@
         value = this[attributeName]() ? this[attributeName]().id : null;
         key   = attributeName + '_id';
       } else {
-        value = this[attributeName]().serialize();
+        value = this[attributeName]() ? this[attributeName]().serialize() : null;
         key   = attributeName;
       }
 
