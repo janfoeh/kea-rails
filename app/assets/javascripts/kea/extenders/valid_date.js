@@ -5,16 +5,35 @@
       ko.utils.validatorBase(target);
 
       var defaults = {
-        message: ""
+        message: "",
+        allowBlank: true,
+        format: 'YYYY-MM-DD',
+        min: null,
+        max: null
       };
 
       options = $.extend({}, defaults, options);
    
       target.validate = function validate(newValue) {
         var validatableValue  = typeof newValue === 'undefined' ? target() : newValue,
-            m                 = moment(validatableValue, ["DD MM", "DD MM YY", "DD MM YYYY"]);
+            m                 = moment(validatableValue, options.format);
 
-        if ( m === null || !m.isValid() || m.isBefore(moment().startOf('day')) ) {
+        if (options.allowBlank && target.isBlank(validatableValue)) {
+          target.markValid();
+          return;
+        }
+
+        if ( m === null || !m.isValid()) {
+          target.markInvalid(options.message);
+          return false;
+        }
+        
+        if (options.min && m.isBefore(options.min)) {
+          target.markInvalid(options.message);
+          return false;
+        }
+        
+        if (options.max && m.isAfter(options.max)) {
           target.markInvalid(options.message);
           return false;
         }
