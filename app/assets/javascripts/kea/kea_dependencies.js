@@ -1,4 +1,5 @@
 //= require knockout-3.3.0-debug
+//= require knockout-mapping-2.4.1
 
 //= require_directory ../../../../vendor/assets/javascripts/.
 

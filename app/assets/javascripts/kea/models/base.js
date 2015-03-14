@@ -171,7 +171,22 @@
     this.resource_path = data.resource_path;
     
     this._deserializableAttributes.forEach(function(name) {
-      this[name]( data[name] );
+      var newValue = data[name];
+      
+      if (this.deserializationOptions.attributes[name] &&
+          this.deserializationOptions.attributes[name].map === true) {
+        
+        var currentValue = this[name]();
+
+        if (typeof currentValue === 'object') {
+          ko.mapping.fromJS(newValue, {}, currentValue);
+        } else {
+          this[name]( ko.mapping.fromJS(newValue) );
+        }
+        
+      } else {
+        this[name](newValue);
+      }
     }, this);
     
     this.forEachAssocation('deserializable', function(attributeName, modelName) {
@@ -243,7 +258,13 @@
       var value = this[name]();
       
       if (shouldIncludeAttribute(name, value)) {
-        result[name] = value;
+        
+        if (attributeOptions(name).map === true) {
+          result[name] = ko.mapping.toJS(value);
+        } else {
+          result[name] = value;
+        }
+        
       }
     }, this);
     
