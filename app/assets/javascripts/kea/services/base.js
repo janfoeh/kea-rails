@@ -161,7 +161,8 @@
     return $.ajax({
       type:     'POST',
       url:      path,
-      data:     params,
+      data:     JSON.stringify(params),
+      contentType: "application/json",
       dataType: 'JSON'
 
     }).then(function(data) {
@@ -187,7 +188,8 @@
     return $.ajax({
       type:     'PUT',
       url:      path,
-      data:     params,
+      data:     JSON.stringify(params),
+      contentType: "application/json",
       dataType: 'JSON'
 
     }).then(function(data) {
