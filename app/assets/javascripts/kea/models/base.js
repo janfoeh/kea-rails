@@ -237,9 +237,7 @@
     shouldIncludeAttribute = function shouldIncludeAttribute(name, value) {
       var skipBlank = typeof attributeOptions(name).skipBlank !== 'undefined' ? attributeOptions(name).skipBlank : options.skipBlank;
       
-      if ( that._serializableAttributes.indexOf(name) === -1) {
-        return false;
-      } else if (skipBlank && isBlank(value)) {
+      if (skipBlank && isBlank(value)) {
         return false;
       } else {
         return true;
