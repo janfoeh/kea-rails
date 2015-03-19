@@ -96,7 +96,7 @@
       this[deserializationKey][attributeName] = modelName;
       
       if (typeof options !== 'boolean') {
-        this.deserializationOptions.attributes[name] = options.deserialize;
+        this.deserializationOptions.attributes[attributeName] = options.deserialize;
       }
     }
     
@@ -104,7 +104,7 @@
       this[serializationKey][attributeName] = modelName;
       
       if (typeof options !== 'boolean') {
-        this.serializationOptions.attributes[name] = options.serialize;
+        this.serializationOptions.attributes[attributeName] = options.serialize;
       }
     }
   };
