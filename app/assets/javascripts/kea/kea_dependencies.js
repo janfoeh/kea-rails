@@ -13,6 +13,7 @@
 //= require knockout-sortable/build/knockout-sortable
 //= require humane-js/humane
 //= require Keypress/keypress.js
+//= require pikaday/pikaday.js
 
 //= require ./kea_init
 
