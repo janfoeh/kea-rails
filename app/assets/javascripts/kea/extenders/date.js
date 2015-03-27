@@ -23,6 +23,16 @@
           target(formatted);
         }
       }, this);
+      
+      target.date.toMoment = function toMoment() {
+        return moment(target(), options.internal);
+      };
+      
+      target.date.fromMoment = function fromMoment(moment) {
+        target( moment.format(options.internal) );
+      };
+      
+      target.date.options = options;
    
       //return the original observable
       return target;
