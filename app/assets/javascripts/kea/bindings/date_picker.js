@@ -15,6 +15,13 @@
         format: observable.date.options.external,
         onSelect: function() {
           observable.date.fromMoment( this.getMoment() );
+        },
+        i18n: {
+          previousMonth : 'vorheriger Monat',
+          nextMonth     : 'Nächster Monat',
+          months        : ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'],
+          weekdays      : ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+          weekdaysShort : ['So','Mo','Di','Mi','Do','Fr','Sa']
         }
       };
 
