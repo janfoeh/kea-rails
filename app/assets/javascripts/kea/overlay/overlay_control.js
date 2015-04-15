@@ -73,7 +73,16 @@
     };
     
     this.hide = function hide() {
+      // that.runCallbacks('beforeClose');
+      // that.veil.hide();
+      that.hideAndRemove();
+    };
+    
+    this.hideAndRemove = function hideAndRemove() {
       that.runCallbacks('beforeClose');
+      that.veil.addCallback('afterHide', function() {
+        that.veil.destroy();
+      });
       that.veil.hide();
     };
     
