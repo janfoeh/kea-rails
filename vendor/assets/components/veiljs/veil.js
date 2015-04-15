@@ -268,8 +268,9 @@
 
       if (this.options.listenToCustomEvents) {
         this.$overlay.off('hide.veil');
-        _executeCallbacksFor.call(this, 'afterHide', this.$overlay);
       }
+      
+      _executeCallbacksFor.call(this, 'afterHide', this.$overlay);
     };
 
     /**

@@ -32,11 +32,11 @@
     "doc",
     "sass"
   ],
-  "_release": "c652d98cce",
+  "_release": "9e9fecdeb2",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "c652d98ccefd5ef965af1978ce647eebd8b1dccd"
+    "commit": "9e9fecdeb2e8a50c4074cdf70669f854f8df448c"
   },
   "_source": "git://github.com/janfoeh/veiljs.git",
   "_target": "*",
