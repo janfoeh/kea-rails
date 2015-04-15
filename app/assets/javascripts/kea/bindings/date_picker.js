@@ -25,8 +25,12 @@
     update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
       var observable  = valueAccessor(),
           pikaday     = $(element).data('pikaday');
-          
-      pikaday.setMoment( observable.date.toMoment() );
+      
+      if (!observable()) {
+        pikaday.setDate(null);
+      } else {
+        pikaday.setMoment( observable.date.toMoment() );
+      }
     }
   };
 
