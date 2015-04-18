@@ -125,6 +125,10 @@
     return fragment;
   };
   
+  Base.prototype.resetLiveSearch = function resetLiveSearch() {
+    this.liveSearchFragments.removeAll();
+  };
+  
   Base.prototype.defaultFragment = function defaultFragment() {
     return new this.Fragment(this, this.displayName, 1);
   };

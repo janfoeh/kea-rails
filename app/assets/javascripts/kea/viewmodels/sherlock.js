@@ -225,6 +225,11 @@
       
       if (that.fragmentsForSearchTerm().length === 0) {
         that.setDefaultFragments();
+        that.showLiveSearchWidgets(false);
+        
+        that.liveSearchProviders().foreach(function(provider) {
+          provider.resetLiveSearch();
+        });
       }
     });
     
