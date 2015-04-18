@@ -205,9 +205,10 @@
           
           if (fragments) {
             fragments.forEach(function(fragment) { that.fragmentsForSearchTerm.push(fragment); });
-            fragments[0].hasFocus(true);
           }
         });
+        
+        // fragments[0].hasFocus(true);
         
       } else {
         if (that.providerSearchActive()) {
