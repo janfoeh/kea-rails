@@ -4,9 +4,9 @@
   ko.bindingHandlers.komplete = {
     init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
       var $container    = $(element),
-          $searchInput  = $container.find('> .komplete-search-term'),
-          listener      = new window.keypress.Listener( $searchInput.get(0) ),
           options       = ko.unwrap(valueAccessor()),
+          $searchInput,
+          listener,
           AutocompleteVm,
           AutocompleteResult,
           vm,
@@ -26,9 +26,10 @@
         this.responseMap       = {label: 'label', value: 'value'};
         this.searchTerm        = ko.observable('').extend({ rateLimit: { timeout: 500, method: "notifyWhenChangesStop" } });
         this.requestInProgress = ko.observable(false);
+        this.hasFocus          = ko.observable(false);
         
         this.showDropdown      = ko.computed(function() {
-          return this.searchResults().length > 0;
+          return this.searchResults().length > 0 && this.hasFocus();
         }, this, {deferEvaluation: true});
         
         this.searchTerm.subscribe(function() {
@@ -48,7 +49,12 @@
         var currentFocus = this.focusedResult(),
             focusedIdx   = currentFocus      ? this.searchResults().indexOf(currentFocus)   : -1,
             futureFocus  = focusedIdx !== -1 ? this.searchResults()[focusedIdx + idxOffset] : null;
-            
+        
+        if (!currentFocus && this.searchResults()[0]) {
+          this.searchResults()[0].hasFocus(true);
+          return;
+        }
+           
         if (!futureFocus) { return; }
         
         currentFocus.hasFocus(false);
@@ -128,45 +134,60 @@
         vm.parseResults = options.parseResults;
       }
       
-      listener.register_combo({
-        keys: "down",
-        on_keydown: function() { vm.focusNext(); }
-      });
-      
-      listener.register_combo({
-        keys: "up",
-        on_keydown: function() { vm.focusPrevious(); }
-      });
-      
-      listener.register_combo({
-        keys: "enter",
-        on_keydown: function() {
-          if (!options.autoSelect && !vm.focusedResult()) {
-            if (options.blurOnSelect) {
-              $searchInput.get(0).blur();
+      $container.on('componentReady', function() {
+        $searchInput = $container.find('> .komplete-search-term');
+        listener     = new window.keypress.Listener( $searchInput.get(0) );
+        
+        $searchInput.on('focus', function() {
+          vm.hasFocus(true);
+        });
+        
+        $searchInput.on('blur', function() {
+          vm.hasFocus(false);
+        });
+        
+        listener.register_combo({
+          keys: "down",
+          on_keydown: function() { vm.focusNext(); }
+        });
+        
+        listener.register_combo({
+          keys: "up",
+          on_keydown: function() { vm.focusPrevious(); }
+        });
+        
+        listener.register_combo({
+          keys: "enter",
+          on_keydown: function() {
+            if (!options.autoSelect && !vm.focusedResult()) {
+              if (options.blurOnSelect) {
+                $searchInput.get(0).blur();
+              }
+              
+              vm.select( $searchInput.val() );
+              
+            } else if (options.autoSelect && !vm.focusedResult()) {
+              return;
+              
+            } else {
+              if (options.blurOnSelect) {
+                $searchInput.get(0).blur();
+              }
+              
+              vm.select( vm.focusedResult() );
             }
-            
-            vm.select( $searchInput.val() );
-            
-          } else if (options.autoSelect && !vm.focusedResult()) {
-            return;
-            
-          } else {
-            if (options.blurOnSelect) {
-              $searchInput.get(0).blur();
-            }
-            
-            vm.select( vm.focusedResult() );
           }
-        }
-      });
-      
-      $container.on('click', function() {
-        $searchInput.focus();
+        });
+        
+        $container.on('click', function() {
+          $searchInput.focus();
+        });
       });
       
       ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-        listener.destroy();
+        if (listener) {
+          listener.destroy();
+        }
       });
       
       return ko.bindingHandlers.with.init(element, function() { return vm; }, allBindingsAccessor, viewModel, bindingContext);
