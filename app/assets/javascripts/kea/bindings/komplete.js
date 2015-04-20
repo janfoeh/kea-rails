@@ -109,6 +109,13 @@
       
       vm = options.vm || new AutocompleteVm(options.url, options.autoSelect, options.onSelect);
       
+      if (options.observable) {
+        ko.computed(function() {
+          vm.searchTerm( options.observable() );
+          
+        }, this, { disposeWhenNodeIsRemoved: element });
+      }
+      
       if (options.fetch) {
         vm.fetch = options.fetch;
       }
