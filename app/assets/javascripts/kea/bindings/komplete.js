@@ -33,7 +33,7 @@
         }, this, {deferEvaluation: true});
         
         this.searchTerm.subscribe(function() {
-          if (this.searchTerm().length > 0) {
+          if (this.searchTerm() && this.searchTerm().length > 0) {
             this.fetch();
           }
         }, this);
