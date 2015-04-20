@@ -227,7 +227,7 @@
         that.setDefaultFragments();
         that.showLiveSearchWidgets(false);
         
-        that.liveSearchProviders().foreach(function(provider) {
+        that.liveSearchProviders().forEach(function(provider) {
           provider.resetLiveSearch();
         });
       }
