@@ -30,7 +30,7 @@
         
         this.showDropdown      = ko.computed(function() {
           return this.searchResults().length > 0 && this.hasFocus();
-        }, this, {deferEvaluation: true});
+        }, this, {deferEvaluation: true}).extend({ rateLimit: { timeout: 250, method: "notifyWhenChangesStop" } });
         
         this.searchTerm.subscribe(function() {
           if (this.searchTerm() && this.searchTerm().length > 0) {
