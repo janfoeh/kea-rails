@@ -34,6 +34,16 @@
       };
     }
     
+    if (typeof target.resetValidationState === 'undefined') {
+      target.resetValidationState = function resetValidationState() {
+        target.hasError(false);
+        target.isUnvalidated(true);
+        target.validationInProgress(false);
+        target.onNextValidationChange = null;
+        target.validationMessage(null);
+      };
+    }
+    
     if (typeof target.isBlank === 'undefined') {
       target.isBlank = function isBlank(value) {
         value = arguments.length === 0 ? target() : value;

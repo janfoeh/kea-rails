@@ -167,6 +167,10 @@
   Base.prototype.deserialize = function deserialize(data) {
     this.persisted(true);
     
+    if (typeof this.resetValidationState === 'function') {
+      this.resetValidationState();
+    }
+    
     this.id            = data.id;
     this.resource_path = data.resource_path;
     
@@ -312,6 +316,16 @@
 
       this.attachValidators(options);
       this.isValidatable(true);
+    };
+    
+    this.resetValidationState = function resetValidationState() {
+      that.forEachValidatableField(function(observable) {
+        observable.resetValidationState();
+      }, this);
+
+      that.forEachValidatableAssociation(function(association) {
+        association.resetValidationState();
+      });
     };
 
     this.validatableFields = function validatableFields() {
