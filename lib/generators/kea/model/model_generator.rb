@@ -51,7 +51,7 @@ class Kea::ModelGenerator < Rails::Generators::NamedBase
       unserializable_attributes << attribute if @klass.attribute_names.include?(attribute)
     end
     
-    attribute_initializers << "this.unserializableAttributes(#{unserializable_attributes.collect { |a| "'#{a}'"}.join(", ")});"
+    attribute_initializers << "this.unserializableAttributes([#{unserializable_attributes.collect { |a| "'#{a}'"}.join(", ")}]);"
     
     @model_attributes.in_groups_of(5, false) do |group|
       serializable_attribute_strings << '      ' + group.collect { |attribute| "'#{attribute}'" }.join(', ') + ",\n"
@@ -59,7 +59,7 @@ class Kea::ModelGenerator < Rails::Generators::NamedBase
     
     serializable_attribute_strings.gsub!(/,\n\z/, "\n")
     
-    attribute_initializers << "this.serializableAttributes(\n#{serializable_attribute_strings}    );"
+    attribute_initializers << "this.serializableAttributes([\n#{serializable_attribute_strings}    ]);"
     
     @model_associations.each do |assoc|
       attribute_initializers << case assoc.macro

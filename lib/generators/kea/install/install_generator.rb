@@ -17,6 +17,8 @@ class Kea::InstallGenerator < Rails::Generators::Base
     empty_directory namespaced_path("app/assets/javascripts", "services")
     create_file     namespaced_path("app/assets/javascripts", "services/.keep")
     empty_directory namespaced_path("app/assets/javascripts", "viewmodels")
+    empty_directory namespaced_path("app/assets/javascripts", "components")
+    create_file     namespaced_path("app/assets/javascripts", "components/.keep")
     empty_directory namespaced_path("app/assets/javascripts", "sherlock")
     create_file     namespaced_path("app/assets/javascripts", "sherlock/.keep")
   end
@@ -42,6 +44,7 @@ class Kea::InstallGenerator < Rails::Generators::Base
 //= require_directory ./services
 //= require ./viewmodels/main
 //= require_directory ./viewmodels
+//= require_directory ./components
 
 //= require_directory ./sherlock
 
