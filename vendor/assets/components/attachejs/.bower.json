@@ -32,11 +32,11 @@
     "doc",
     "sass"
   ],
-  "_release": "a9c0c8356c",
+  "_release": "105f71557f",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "a9c0c8356c41aeb758d093c7805d920e5842cfe8"
+    "commit": "105f71557f65e7f80aca1bfa7a3585655d7bbe77"
   },
   "_source": "git://github.com/janfoeh/attachejs.git",
   "_target": "*",
