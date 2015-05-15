@@ -56,5 +56,14 @@ window.kea.u = {
     string = string.replace(_regex_dash_prefix, '');
 
     return string.toLowerCase();
+  },
+  
+  eventOffsetXY: function eventOffsetXY(event) {
+    "use strict";
+    
+    var target  = event.target || event.srcElement,
+        rect    = target.getBoundingClientRect(),
+        offsetX = event.clientX - rect.left,
+        offsetY = event.clientY - rect.top;
   }
 };
