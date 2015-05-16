@@ -65,5 +65,10 @@ window.kea.u = {
         rect    = target.getBoundingClientRect(),
         offsetX = event.clientX - rect.left,
         offsetY = event.clientY - rect.top;
+        
+    return {
+      x: offsetX,
+      y: offsetY
+    };
   }
 };
