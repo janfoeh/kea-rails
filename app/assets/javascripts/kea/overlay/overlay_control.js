@@ -80,9 +80,11 @@
     
     this.hideAndRemove = function hideAndRemove() {
       that.runCallbacks('beforeClose');
+      
       that.veil.addCallback('afterHide', function() {
-        that.veil.destroy();
+        that.destroy();
       });
+      
       that.veil.hide();
     };
     
