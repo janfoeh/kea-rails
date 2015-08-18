@@ -47,7 +47,7 @@
 
     } else if (jqXHR.status === 403) {
       kea.notify("Das geht nun wirklich nicht! <p><small>Diese Aktion ist nicht erlaubt</small></p>", 'error');
-      
+
     }
 
   };
@@ -57,7 +57,7 @@
       kea.notify(jqXHR.responseText, 'error');
     }
   };
-  
+
   failure423Handler = function failure423Handler(jqXHR, textStatus) {
     if (jqXHR.status === 423) {
       kea.notify(jqXHR.responseText, 'error');
@@ -71,27 +71,29 @@
 
     return name.toLowerCase();
   };
-  
+
   _resourcePathForAction = function _resourcePathForAction(action, modelObject) {
     var pathMethod = action + 'Path';
-    
+
     if (typeof modelObject[pathMethod] === 'function') {
       return modelObject[action + 'Path']();
-      
+
     } else if (modelObject.service() && typeof modelObject.service()[pathMethod] === 'function') {
       return modelObject.service()[pathMethod]();
-      
+
     } else {
       return modelObject.resource_path;
     }
   };
 
-  get = function get(modelName, path, params, cache_key) {
+  get = function get(modelName, path, params, cache_key, use_failurehandler) {
     var responseProcessor,
         deferred,
         cachedResult;
 
     params = params || {};
+
+    use_failurehandler = typeof use_failurehandler !== 'undefined' ? use_failurehandler : true;
 
     if (cache_key === true) {
       cache_key = new URI(path).query(params).toString();
@@ -114,16 +116,23 @@
       cachedResult = _lookupCache(cache_key);
     }
 
-    return (cachedResult || _request('GET', path, params))
-      .then(responseProcessor)
-      .fail(_defaultFailureHandler);
+    if (use_failurehandler) {
+      return (cachedResult || _request('GET', path, params))
+        .then(responseProcessor)
+        .fail(_defaultFailureHandler);
+    } else {
+      return (cachedResult || _request('GET', path, params))
+        .then(responseProcessor);
+    }
   };
-  
-  refresh = function refresh(modelName, modelObject, params, path) {
+
+  refresh = function refresh(modelName, modelObject, params, path, use_failurehandler) {
     var responseProcessor,
         deferred;
 
     params = params || {};
+
+    use_failurehandler = typeof use_failurehandler !== 'undefined' ? use_failurehandler : true;
 
     responseProcessor = function responseProcessor(data) {
       if (DEBUG) { console.debug("received resource %s for refresh: %o", modelName, data); }
@@ -132,21 +141,26 @@
         if (DEBUG) { console.error("received multiple resources when trying to refresh %s : %o", modelName, data); }
 
       } else {
-        
+
         if (typeof modelObject.refreshFromJS === 'function') {
           modelObject.refresh(data);
-          
+
         } else {
           modelObject.deserialize(data);
         }
-        
+
         return modelObject;
       }
     };
 
-    return _request('GET', path, params)
-      .then(responseProcessor)
-      .fail(_defaultFailureHandler);
+    if (use_failurehandler) {
+      return _request('GET', path, params)
+        .then(responseProcessor)
+        .fail(_defaultFailureHandler);
+    } else {
+      return _request('GET', path, params)
+        .then(responseProcessor);
+    }
   };
 
   create = function create(modelName, modelObject, path) {
@@ -200,7 +214,7 @@
   };
 
   destroy = function destroy(modelName, modelObject, path) {
-    
+
     if (!path) {
       path = _resourcePathForAction('destroy', modelObject);
     }
