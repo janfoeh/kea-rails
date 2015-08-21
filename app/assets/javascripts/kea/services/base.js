@@ -143,7 +143,7 @@
       } else {
 
         if (typeof modelObject.refreshFromJS === 'function') {
-          modelObject.refresh(data);
+          modelObject.refreshFromJS(data);
 
         } else {
           modelObject.deserialize(data);
