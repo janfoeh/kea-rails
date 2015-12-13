@@ -17,8 +17,8 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,lib,vendor}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 
-  s.add_dependency "rails", "~> 4.1"
-  
+  s.add_dependency "rails", "~> 4"
+
   s.post_install_message = %q{
   Installation
   -----------
